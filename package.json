@@ -1,0 +1,16 @@
+{
+  "name": "ip-consistency-guard",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Proportion-based consistency checker for IP characters (Phase 1: the checker core).",
+  "scripts": {
+    "dev": "node --watch server/index.js",
+    "start": "node server/index.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.110.0",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1"
+  }
+}

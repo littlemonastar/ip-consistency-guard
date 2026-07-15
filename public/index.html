@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IP Consistency Guard</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar" hidden>
+      <div class="topbar-row">
+        <h1>IP Consistency Guard</h1>
+        <div class="topbar-actions">
+          <button id="history-btn" class="btn ghost sm" hidden>History</button>
+          <div id="auth-area" class="auth-area"></div>
+        </div>
+      </div>
+      <p class="tagline">
+        Proportion-based on-model checking. Register a character from reference views, then
+        measure any output against it. v1 uses LLM-estimated ratios — a step above qualitative
+        checks, but not pixel-precise.
+      </p>
+    </header>
+
+    <!-- LOGIN GATE (centered landing) -->
+    <section id="landing" class="landing" hidden>
+      <div class="landing-inner">
+        <h1 class="landing-title">IP Consistency Guard</h1>
+        <p class="landing-tag">
+          Proportion-based on-model checking. Register a character from reference views, then
+          measure any output against it.
+        </p>
+        <a class="btn primary lg" href="/auth/github">Sign in with GitHub</a>
+        <p class="landing-note">
+          Your characters and check history are private to your account.
+        </p>
+      </div>
+    </section>
+
+    <!-- CHECK HISTORY (modal) -->
+    <div id="history-modal" class="modal" hidden>
+      <div class="modal-box">
+        <div class="modal-head">
+          <h2>Check history</h2>
+          <div class="modal-actions">
+            <button id="clear-history-btn" class="btn ghost sm">Clear all</button>
+            <button id="close-history-btn" class="btn ghost sm">Close</button>
+          </div>
+        </div>
+        <div id="history-list" class="history-list"></div>
+      </div>
+    </div>
+
+    <!-- APP (shown only when signed in) -->
+    <div id="app" hidden>
+      <!-- CHARACTER SHEET (pinned top) -->
+      <section id="sheet-section" class="panel">
+        <div class="panel-head">
+          <h2>Character sheet</h2>
+          <div class="panel-actions">
+            <button id="new-sheet-btn" class="btn ghost" hidden>New / edit sheet</button>
+          </div>
+        </div>
+
+        <!-- Pinned view of the saved sheet -->
+        <div id="sheet-view" hidden>
+          <div class="sheet-grid">
+            <div class="sheet-thumb">
+              <img id="sheet-thumb-img" alt="reference" />
+            </div>
+            <div>
+              <h3 id="sheet-name">—</h3>
+              <div class="sheet-cols">
+                <div>
+                  <h4>Traits</h4>
+                  <ul id="sheet-traits" class="tag-list"></ul>
+                </div>
+                <div>
+                  <h4>Proportion rules</h4>
+                  <ul id="sheet-rules" class="tag-list"></ul>
+                </div>
+                <div>
+                  <h4>Forbidden</h4>
+                  <ul id="sheet-forbidden" class="tag-list"></ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sheet creation / editing -->
+        <div id="sheet-editor">
+          <label class="field">
+            <span>Character name (optional)</span>
+            <input id="char-name" type="text" placeholder="e.g. YourCharacter" />
+          </label>
+
+          <div class="edit-block">
+            <div class="edit-head">
+              <h4>Reference views (background-removed)</h4>
+              <button id="add-view-btn" class="btn ghost sm">+ view</button>
+            </div>
+            <p class="hint">
+              Add a front view, plus side / back / three-quarter if you have them. Label each
+              with its angle. Two or more angles enable view-aware checking.
+            </p>
+            <div id="ref-views" class="ref-views"></div>
+          </div>
+
+          <button id="extract-btn" class="btn primary">Extract traits with Claude</button>
+
+          <div id="draft-editor" hidden>
+            <p class="hint">
+              Claude proposed the sheet below. Accept, edit, or add rules — then save.
+            </p>
+
+            <div class="edit-block">
+              <div class="edit-head">
+                <h4>Traits</h4>
+                <button class="btn ghost sm" data-add="trait">+ trait</button>
+              </div>
+              <div id="edit-traits" class="edit-rows"></div>
+            </div>
+
+            <div class="edit-block">
+              <div class="edit-head">
+                <h4>Proportion rules</h4>
+                <button class="btn ghost sm" data-add="rule">+ rule</button>
+              </div>
+              <div id="edit-rules" class="edit-rows"></div>
+            </div>
+
+            <div class="edit-block">
+              <div class="edit-head">
+                <h4>Forbidden</h4>
+                <button class="btn ghost sm" data-add="forbidden">+ forbidden</button>
+              </div>
+              <div id="edit-forbidden" class="edit-rows"></div>
+            </div>
+
+            <button id="save-sheet-btn" class="btn primary">Save character sheet</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- CHECK AN OUTPUT -->
+      <section class="panel">
+        <h2>Check an output</h2>
+        <p class="hint">
+          Upload a background-removed output image to measure against the saved character.
+        </p>
+        <div class="check-row">
+          <label class="dropzone check-drop" id="output-dropzone">
+            <input id="output-file" type="file" accept="image/*" hidden />
+            <img id="output-preview" alt="" hidden />
+            <span class="dropzone-hint">Click to choose an output image</span>
+          </label>
+          <div class="check-actions">
+            <button id="check-btn" class="btn primary">Check</button>
+            <span id="check-hint" class="hint">Save a character sheet first to enable checking.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- RESULT -->
+      <section class="panel result-panel">
+        <h2>Result</h2>
+        <div id="result" class="result-empty">Check an output to see the consistency report.</div>
+      </section>
+    </div>
+
+    <div id="toast" class="toast" hidden></div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
